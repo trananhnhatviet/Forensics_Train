@@ -21,7 +21,8 @@ Vì bài này có tên là bus nên là mình nghĩ ngay tới các Modbus.
 
 Vì Modbus TCP/IP dùng port 502, thế nên ta sẽ lọc các giao thức TCP mà sử dụng port 502 và Modbus.data để lấy.
 
-Nhìn qua thì ta thấy giá trị của Modbus chỉ có 2 giá trị là ``ff00`` và ``0000``, thế nên ta nghĩ ngay tới binary code. Việc của ta là sẽ dùng scapy để lọc lấy các tcp có source port == 502 hoặc destination port == 502 cũng được. 
+Nhìn qua thì ta thấy giá trị của Modbus chỉ có 2 giá trị là ``ff00`` và ``0000``, thế nên ta nghĩ ngay tới binary code. Việc của ta là sẽ dùng scapy để lọc lấy các tcp có source port == 502 hoặc destination port == 502 cũng được.
+
 ```
 from scapy.all import *
 
@@ -61,10 +62,10 @@ Sau khi chạy thì ta thu được output là ``0111100101101111011101010111001
 
 ![1700532225181](image/Writeup/1700532225181.png)
 
-
 **Flag: Modbus_is_easy_after_all!**
 
-___
+---
+
 # USB Wireshark
 
 Trước khi vào bài, ta nên tìm hiểu về khái niệm HID là gì.
@@ -114,14 +115,19 @@ print(hid_value)
 
 Nhìn các giá trị HID, ta thấy rằng chỉ có byte thứ nhất và thứ ba có giá trị, thế nhưng mà byte thứ nhất trông hơi vô tri vì chỉ có là '00' và '02' thế nên là mình sẽ lọc lấy byte thứ 3
 
+Nói thế chứ byte thứ nhất không vô tri đâu =)))
+
+Nếu '00' thì là viết thường còn nếu '02' thì là viết hoa á
+
 ```
 usage_id = []
 
 for i in hid_value:
-    usage_id.append(i[4:6])
+    usage_id.append(str(i[0:2])+ " " + str( i[4:6]))
 ```
 
 Đến đoạn này mình bí rồi, tuy đọc wu ở trên nhưng mà không hiểu cái bảng chữ cái kia ở đâu, thế nên mình có hỏi anh Kai và anh có đưa cho 1 đường [link](https://www.usb.org/sites/default/files/documents/hut1_12v2.pdf) và đọc từ trang 53 - 59.
+Hoặc là [ở đây](https://gist.github.com/ekaitz-zarraga/2b25b94b711684ba4e969e5a5723969b)
 
 Mình đã hiểu và copy alphabet của wu trên, thêm 1 vài ký tự và hoàn thành nốt code của mình thui.
 
@@ -138,7 +144,7 @@ for i in data:
 usage_id = []
 
 for i in hid_value:
-    usage_id.append(i[4:6])
+    usage_id.append(str(i[0:2])+ " " + str( i[4:6]))
 
 map = {
     "04": "a",
@@ -190,16 +196,23 @@ map = {
 
 flag = ""
 for i in usage_id:
-    i = i.upper()
-    if i != "00":
-        flag += map[i]
+    char = i[-2:].upper()
+    if char != "00":
+        if i[:2] == "00":
+            flag += map[char]
+        else:
+            if char == "2D":
+                flag += "_"
+            else:
+                flag += map[char].upper()
 
 print(flag)
 ```
 
-**Flag: kcsc{i-love-you}**
+**Flag: KCSC{I_love_you}**
 
-___
+---
+
 # TCP Challenge
 
 Mở wireshark ra và nhìn thấy như sau
