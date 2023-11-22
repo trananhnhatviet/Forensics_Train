@@ -10,7 +10,7 @@ for i in data:
 usage_id = []
 
 for i in hid_value:
-    usage_id.append(i[4:6])
+    usage_id.append(str(i[0:2])+ " " + str( i[4:6]))
 
 map = {
     "04": "a",
@@ -62,8 +62,11 @@ map = {
 
 flag = ""
 for i in usage_id:
-    i = i.upper()
-    if i != "00":
-        flag += map[i]
+    char = i[-2:].upper()
+    if char != "00":
+        if i[:2] == "00":
+            flag += map[char]
+        else:
+            flag += map[char].upper()
 
 print(flag)
