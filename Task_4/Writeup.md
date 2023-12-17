@@ -80,7 +80,6 @@ Theo như Bard nói thì:
   - @10.2.32.72 chính là máy chủ DNS cụ thể để truy vấn đến
   - Sau đó, các mã base64 ban nãy, sẽ thay '+' -> '}', '/'->'{', sau đó sẽ mã hóa base58
 
-Giờ mình sẽ tham khảo code của anh Khoa để mình làm bài này.
 
 Mình sẽ truy vấn các DNSQR,replace các dấu chấm và sẽ split các dấu '-' vì dạng nó sẽ như thế này
 ```
